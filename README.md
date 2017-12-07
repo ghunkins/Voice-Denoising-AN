@@ -1,4 +1,4 @@
-# Binaural-Source-Localization-CNN
+# Source-Denoising-AN
 
 ### Basic Information
 ---
