@@ -3,6 +3,10 @@ from keras.utils import np_utils
 import numpy as np
 import h5py
 
+import matplotlib
+# Force matplotlib to not use any Xwindows backend.
+matplotlib.use('Agg')
+
 import matplotlib.pylab as plt
 
 
