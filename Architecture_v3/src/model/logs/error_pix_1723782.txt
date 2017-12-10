@@ -1,0 +1,28 @@
+Using TensorFlow backend.
+2017-12-09 11:29:35.311689: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+2017-12-09 11:29:35.311773: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+2017-12-09 11:29:35.312899: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+2017-12-09 11:29:38.681607: I tensorflow/core/common_runtime/gpu/gpu_device.cc:955] Found device 0 with properties: 
+name: Tesla K20Xm
+major: 3 minor: 5 memoryClockRate (GHz) 0.732
+pciBusID 0000:20:00.0
+Total memory: 5.57GiB
+Free memory: 5.49GiB
+2017-12-09 11:29:38.918485: W tensorflow/stream_executor/cuda/cuda_driver.cc:523] A non-primary context 0x11641130 exists before initializing the StreamExecutor. We haven't verified StreamExecutor works with that.
+2017-12-09 11:29:38.919198: I tensorflow/core/common_runtime/gpu/gpu_device.cc:955] Found device 1 with properties: 
+name: Tesla K20Xm
+major: 3 minor: 5 memoryClockRate (GHz) 0.732
+pciBusID 0000:8b:00.0
+Total memory: 5.57GiB
+Free memory: 5.49GiB
+2017-12-09 11:29:38.919288: I tensorflow/core/common_runtime/gpu/gpu_device.cc:847] Peer access not supported between device ordinals 0 and 1
+2017-12-09 11:29:38.919325: I tensorflow/core/common_runtime/gpu/gpu_device.cc:847] Peer access not supported between device ordinals 1 and 0
+2017-12-09 11:29:38.919367: I tensorflow/core/common_runtime/gpu/gpu_device.cc:976] DMA: 0 1 
+2017-12-09 11:29:38.919410: I tensorflow/core/common_runtime/gpu/gpu_device.cc:986] 0:   Y N 
+2017-12-09 11:29:38.919432: I tensorflow/core/common_runtime/gpu/gpu_device.cc:986] 1:   N Y 
+2017-12-09 11:29:38.919456: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1045] Creating TensorFlow device (/gpu:0) -> (device: 0, name: Tesla K20Xm, pci bus id: 0000:20:00.0)
+2017-12-09 11:29:38.919477: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1045] Creating TensorFlow device (/gpu:1) -> (device: 1, name: Tesla K20Xm, pci bus id: 0000:8b:00.0)
+slurmstepd: error: Job 1723782 exceeded memory limit (2105272 > 2097152), being killed
+slurmstepd: error: Exceeded job memory limit
+slurmstepd: error: *** JOB 1723782 ON bhg0003 CANCELLED AT 2017-12-09T11:29:53 ***
+slurmstepd: error: Exceeded step memory limit at some point.
