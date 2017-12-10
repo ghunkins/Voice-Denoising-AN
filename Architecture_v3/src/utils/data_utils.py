@@ -4,6 +4,7 @@ import numpy as np
 import h5py
 import os
 import re
+from time import gmtime, strftime
 
 import matplotlib
 # Force matplotlib to not use any Xwindows backend.
@@ -97,7 +98,7 @@ def load_data(dset, image_data_format):
         return X_full_train, X_sketch_train, X_full_val, X_sketch_val
 
 def load_data_audio(dset, image_data_format):
-    with h5py.File("../../data/processed/%s_data.h5" % dset, "r") as hf:
+    with h5py.File("../../../../%s_data.h5" % dset, "r") as hf:
 
         X_clean_train = hf["clean_train"][:].astype(np.float16)
         X_clean_train = normalization_audio(X_clean_train)
@@ -194,6 +195,35 @@ def plot_generated_batch(X_full, X_sketch, generator_model, batch_size, image_da
     X_sketch = inverse_normalization(X_sketch)
     X_full = inverse_normalization(X_full)
     X_gen = inverse_normalization(X_gen)
+
+    dir_to_save = "../../figures/" + strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    os.createdir(dir_to_save)
+    np.save(dir_to_save + "/{}_noisy.npy".format(suffix), X_sketch)
+    np.save(dir_to_save + "/{}_gen.npy".format(suffix), X_gen)
+    np.save(dir_to_save + "/{}_clean.npy".format(suffix), X_full)
+
+    for i in range(X_gen.shape[0]):
+        plt.pcolormesh(X_gen[i, :, :, 0], cmap="gnuplot2")
+        plt.colorbar()
+        plt.savefig(dir_to_save + '/{}_gen{}.png'.format(suffix, str(i)))
+        plt.pcolormesh(X_sketch[i, :, :, 0], cmap="gnuplot2")
+        plt.colorbar()
+        plt.savefig(dir_to_save + '/{}_noisy{}.png'.format(suffix, str(i)))
+        plt.pcolormesh(X_full[i, :, :, 0], cmap="gnuplot2")
+        plt.colorbar()
+        plt.savefig(dir_to_save + '/{}_clean{}.png'.format(suffix, str(i)))
+
+    return
+
+    time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+
+    np.save("../../figures/current_batch_{}_{}.npy".format('noisy', time), X_sketch)
+    np.save("../../figures/current_batch_{}_{}.npy".format('gen', time), X_gen)
+    np.save("../../figures/current_batch_{}_{}.npy".format('clean', time), X_full)
+
+    for i in range(X_gen.shape[0]):
+        time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+
     #np.save("../../figures/current_batch_%s.png" % suffix)
 
     Xs = X_sketch[:8]
