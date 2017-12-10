@@ -206,12 +206,15 @@ def plot_generated_batch(X_full, X_sketch, generator_model, batch_size, image_da
         plt.pcolormesh(X_gen[i, :, :, 0], cmap="gnuplot2")
         plt.colorbar()
         plt.savefig(dir_to_save + '/{}_gen{}.png'.format(suffix, str(i)))
+        plt.clf()
         plt.pcolormesh(X_sketch[i, :, :, 0], cmap="gnuplot2")
         plt.colorbar()
         plt.savefig(dir_to_save + '/{}_noisy{}.png'.format(suffix, str(i)))
+        plt.clf()
         plt.pcolormesh(X_full[i, :, :, 0], cmap="gnuplot2")
         plt.colorbar()
         plt.savefig(dir_to_save + '/{}_clean{}.png'.format(suffix, str(i)))
+        plt.clf()
 
     return
 
