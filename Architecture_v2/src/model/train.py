@@ -46,7 +46,7 @@ def train(**kwargs):
     general_utils.setup_logging(model_name)
 
     # Load and rescale data
-    X_full_train, X_sketch_train, X_full_val, X_sketch_val = data_utils.load_data(dset, image_data_format)
+    X_full_train, X_sketch_train, X_full_val, X_sketch_val = data_utils.load_data_audio(dset, image_data_format)
     img_dim = X_full_train.shape[-3:]
 
     # Get the number of non overlapping patch and the size of input image to the discriminator

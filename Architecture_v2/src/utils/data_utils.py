@@ -2,6 +2,8 @@ from keras.datasets import mnist
 from keras.utils import np_utils
 import numpy as np
 import h5py
+import os
+import re
 
 import matplotlib
 # Force matplotlib to not use any Xwindows backend.
@@ -18,6 +20,14 @@ def normalization(X):
 def inverse_normalization(X):
 
     return (X + 1.) / 2.
+
+def normalization_audio(X):
+
+    return X / 721.
+
+def inverse_normalization_audio(X):
+    
+    return X * 721.
 
 
 def get_nb_patch(img_dim, patch_size, image_data_format):
@@ -64,20 +74,20 @@ def load_data(dset, image_data_format):
 
     with h5py.File("../../data/processed/%s_data.h5" % dset, "r") as hf:
 
-        X_full_train = hf["train_data_full"][:].astype(np.float32)
+        X_full_train = hf["train_data_full"][:].astype(np.float16)
         X_full_train = normalization(X_full_train)
 
-        X_sketch_train = hf["train_data_sketch"][:].astype(np.float32)
+        X_sketch_train = hf["train_data_sketch"][:].astype(np.float16)
         X_sketch_train = normalization(X_sketch_train)
 
         if image_data_format == "channels_last":
             X_full_train = X_full_train.transpose(0, 2, 3, 1)
             X_sketch_train = X_sketch_train.transpose(0, 2, 3, 1)
 
-        X_full_val = hf["val_data_full"][:].astype(np.float32)
+        X_full_val = hf["val_data_full"][:].astype(np.float16)
         X_full_val = normalization(X_full_val)
 
-        X_sketch_val = hf["val_data_sketch"][:].astype(np.float32)
+        X_sketch_val = hf["val_data_sketch"][:].astype(np.float16)
         X_sketch_val = normalization(X_sketch_val)
 
         if image_data_format == "channels_last":
@@ -85,6 +95,54 @@ def load_data(dset, image_data_format):
             X_sketch_val = X_sketch_val.transpose(0, 2, 3, 1)
 
         return X_full_train, X_sketch_train, X_full_val, X_sketch_val
+
+def load_data_audio(dset, image_data_format):
+    with h5py.File("../../data/processed/%s_data.h5" % dset, "r") as hf:
+
+        X_clean_train = hf["clean_train"][:].astype(np.float16)
+        X_clean_train = normalization_audio(X_clean_train)
+
+        X_noisy_train = hf["mag_train"][:].astype(np.float16)
+        X_noisy_train = normalization_audio(X_noisy_train)
+
+        if image_data_format == "channels_last":
+            X_clean_train = X_clean_train.transpose(0, 2, 3, 1)
+            X_noisy_train = X_noisy_train.transpose(0, 2, 3, 1)
+
+        X_clean_val = hf["clean_val"][:].astype(np.float16)
+        X_clean_val = normalization_audio(X_clean_val)
+
+        X_noisy_val = hf["mag_val"][:].astype(np.float16)
+        X_noisy_val = normalization_audio(X_noisy_val)
+
+        if image_data_format == "channels_last":
+            X_clean_val = X_clean_val.transpose(0, 2, 3, 1)
+            X_noisy_val = X_noisy_val.transpose(0, 2, 3, 1)
+
+        return X_clean_train, X_noisy_train, X_clean_val, X_noisy_val
+
+
+def load_test_audio(size=10000, train_pct=0.8):
+    ROOT = '/scratch/ghunkins/Combined/'
+    # compile regexes
+    mag_r = re.compile('\d+_mag*')
+    phase_r = re.compile('\d+_phase_*')
+    clean_r = re.compile('\d+_clean_*')
+    # get full list of files
+    full_dir = os.listdir(ROOT)
+    # filter
+    mag_dir = filter(mag_r.match, full_dir)
+    phase_dir = filter(phase_r.match, full_dir)
+    clean_dir = filter(clean_r.match, full_dir)
+    # sort
+    mag_dir.sort()
+    phase_dir.sort()
+    clean_dir.sort()
+    # get indices
+    train_indices = (0, int(size * train_pct))
+    test_indices = (train_indices, train_indices + int(size * (1-train_pct)))
+
+    #X_full_train = np.array
 
 
 def gen_batch(X1, X2, batch_size):
@@ -161,7 +219,8 @@ def plot_generated_batch(X_full, X_sketch, generator_model, batch_size, image_da
         Xr = Xr.transpose(1,2,0)
 
     if Xr.shape[-1] == 1:
-        plt.imshow(Xr[:, :, 0], cmap="gray")
+        #plt.imshow(Xr[:, :, 0], cmap="gray")
+        plt.pcolormesh(Xr[:, :, 0], cmap="gnuplot2")
     else:
         plt.imshow(Xr)
     plt.axis("off")
