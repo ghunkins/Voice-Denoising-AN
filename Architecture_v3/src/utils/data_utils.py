@@ -197,7 +197,7 @@ def plot_generated_batch(X_full, X_sketch, generator_model, batch_size, image_da
     X_gen = inverse_normalization(X_gen)
 
     dir_to_save = "../../figures/" + strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    os.createdir(dir_to_save)
+    os.makedirs(dir_to_save)
     np.save(dir_to_save + "/{}_noisy.npy".format(suffix), X_sketch)
     np.save(dir_to_save + "/{}_gen.npy".format(suffix), X_gen)
     np.save(dir_to_save + "/{}_clean.npy".format(suffix), X_full)
