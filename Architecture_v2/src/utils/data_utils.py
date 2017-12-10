@@ -100,20 +100,20 @@ def load_data_audio(dset, image_data_format):
     with h5py.File("../../data/processed/%s_data.h5" % dset, "r") as hf:
 
         X_clean_train = hf["clean_train"][:].astype(np.float16)
-        #X_clean_train = normalization_audio(X_clean_train)
+        X_clean_train = normalization_audio(X_clean_train)
 
         X_noisy_train = hf["mag_train"][:].astype(np.float16)
-        #X_noisy_train = normalization_audio(X_noisy_train)
+        X_noisy_train = normalization_audio(X_noisy_train)
 
         if image_data_format == "channels_last":
             X_clean_train = X_clean_train.transpose(0, 2, 3, 1)
             X_noisy_train = X_noisy_train.transpose(0, 2, 3, 1)
 
         X_clean_val = hf["clean_val"][:].astype(np.float16)
-        #X_clean_val = normalization_audio(X_clean_val)
+        X_clean_val = normalization_audio(X_clean_val)
 
         X_noisy_val = hf["mag_val"][:].astype(np.float16)
-        #X_noisy_val = normalization_audio(X_noisy_val)
+        X_noisy_val = normalization_audio(X_noisy_val)
 
         if image_data_format == "channels_last":
             X_clean_val = X_clean_val.transpose(0, 2, 3, 1)
@@ -191,9 +191,9 @@ def plot_generated_batch(X_full, X_sketch, generator_model, batch_size, image_da
     # Generate images
     X_gen = generator_model.predict(X_sketch)
 
-    #X_sketch = inverse_normalization(X_sketch)
-    #X_full = inverse_normalization(X_full)
-    #X_gen = inverse_normalization(X_gen)
+    X_sketch = inverse_normalization(X_sketch)
+    X_full = inverse_normalization(X_full)
+    X_gen = inverse_normalization(X_gen)
     #np.save("../../figures/current_batch_%s.png" % suffix)
 
     Xs = X_sketch[:8]
