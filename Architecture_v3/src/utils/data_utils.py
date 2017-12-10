@@ -11,9 +11,9 @@ import matplotlib
 matplotlib.use('Agg')
 
 import matplotlib.pylab as plt
-from matplotlib.colors import LogNorm
+from matplotlib.colors import LogNorm, Normalize
 
-norm = LogNorm(vmin=0.0, vmax=0.01, clip=True)
+norm = Normalize(vmin=0.0,vmax=0.1, clip=True)
 
 
 def normalization(X):
@@ -26,7 +26,7 @@ def inverse_normalization(X):
     return norm.inverse((X + 1.) / 2.)
 
 def normalization_audio(X):
-
+    #X = X.clip(min=0)
     return (norm(X) * 2.) - 1.
 
 def inverse_normalization_audio(X):
