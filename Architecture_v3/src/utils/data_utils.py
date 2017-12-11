@@ -122,6 +122,7 @@ def load_data_audio(dset, image_data_format):
             print "CHANNELS LAST"
             X_clean_train = X_clean_train.transpose(0, 2, 3, 1)
             X_noisy_train = X_noisy_train.transpose(0, 2, 3, 1)
+            X_phase_train = X_phase_train.transpose(0, 2, 3, 1)
 
         X_clean_val = hf["clean_val"][:].astype(np.float16)
         X_clean_val = normalization_audio(X_clean_val)
@@ -134,6 +135,7 @@ def load_data_audio(dset, image_data_format):
         if image_data_format == "channels_last":
             X_clean_val = X_clean_val.transpose(0, 2, 3, 1)
             X_noisy_val = X_noisy_val.transpose(0, 2, 3, 1)
+            X_phase_val = X_phase_val.transpose(0, 2, 3, 1)
 
         return X_clean_train, X_noisy_train, X_phase_train, X_clean_val, X_noisy_val, X_phase_val
 
