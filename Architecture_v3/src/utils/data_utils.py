@@ -119,6 +119,7 @@ def load_data_audio(dset, image_data_format):
         X_phase_train = hf["phase_train"][:].astype(np.float16)
 
         if image_data_format == "channels_last":
+            print "CHANNELS LAST"
             X_clean_train = X_clean_train.transpose(0, 2, 3, 1)
             X_noisy_train = X_noisy_train.transpose(0, 2, 3, 1)
 
@@ -229,6 +230,8 @@ def plot_generated_batch(X_full, X_sketch, X_phase, generator_model, batch_size,
         c_gen = np.append(np.zeros((1, 256)), c_gen, axis=0)
         c_noisy = np.append(np.zeros((1, 256)), c_noisy, axis=0)
         c_clean = np.append(np.zeros((1, 256)), c_clean, axis=0)
+        print c_gen.shape, c_noisy.shape, c_clean.shape
+
         f_gen = open(dir_to_save + '/{}_gen{}.wav'.format(suffix, str(i)), 'w')
         f_noisy = open(dir_to_save + '/{}_noisy{}.wav'.format(suffix, str(i)), 'w')
         f_clean = open(dir_to_save + '/{}_clean{}.wav'.format(suffix, str(i)), 'w')
