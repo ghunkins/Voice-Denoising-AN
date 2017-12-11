@@ -8,4 +8,4 @@
 #SBATCH --gres=gpu:2
 
 source activate new_pix
-python main.py --backend tensorflow --generator deconv --dset audio_1000 --nb_epoch 10 --img_dim 256 64 64
+python main.py --backend tensorflow --dset audio_1000 --nb_epoch 10 --img_dim 256 64 64
