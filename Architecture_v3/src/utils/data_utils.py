@@ -31,7 +31,7 @@ def normalization_audio(X):
 
 def inverse_normalization_audio(X):
     
-    return norm.inverse((X + 1.) / 2.)
+    return ((X + 1.) * 0.1)
 
 
 def get_nb_patch(img_dim, patch_size, image_data_format):
@@ -195,9 +195,9 @@ def plot_generated_batch(X_full, X_sketch, generator_model, batch_size, image_da
     # Generate images
     X_gen = generator_model.predict(X_sketch)
 
-    #X_sketch = inverse_normalization_audio(X_sketch)
-    #X_full = inverse_normalization_audio(X_full)
-    #X_gen = inverse_normalization_audio(X_gen)
+    X_sketch = inverse_normalization_audio(X_sketch)
+    X_full = inverse_normalization_audio(X_full)
+    X_gen = inverse_normalization_audio(X_gen)
 
     dir_to_save = "../../figures/" + suffix + "_" + strftime("%Y-%m-%d %H:%M:%S", gmtime())
     os.makedirs(dir_to_save)
