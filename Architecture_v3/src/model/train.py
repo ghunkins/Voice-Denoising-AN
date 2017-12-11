@@ -46,7 +46,7 @@ def train(**kwargs):
     general_utils.setup_logging(model_name)
 
     # Load and rescale data
-    X_full_train, X_sketch_train, X_full_val, X_sketch_val = data_utils.load_data_audio(dset, image_data_format)
+    X_full_train, X_sketch_train, X_phase_train, X_full_val, X_sketch_val, X_phase_val = data_utils.load_data_audio(dset, image_data_format)
     img_dim = X_full_train.shape[-3:]
 
     # Get the number of non overlapping patch and the size of input image to the discriminator
@@ -101,7 +101,7 @@ def train(**kwargs):
             batch_counter = 1
             start = time.time()
 
-            for X_full_batch, X_sketch_batch in data_utils.gen_batch(X_full_train, X_sketch_train, batch_size):
+            for X_full_batch, X_sketch_batch, X_phase_batch in data_utils.gen_batch(X_full_train, X_sketch_train, X_phase_train, batch_size):
 
                 # Create a batch to feed the discriminator model
                 X_disc, y_disc = data_utils.get_disc_batch(X_full_batch,
@@ -136,9 +136,9 @@ def train(**kwargs):
                 # Save images for visualization
                 if batch_counter % (n_batch_per_epoch / 2) == 0:
                     # Get new images from validation
-                    data_utils.plot_generated_batch(X_full_batch, X_sketch_batch, generator_model,
+                    data_utils.plot_generated_batch(X_full_batch, X_sketch_batch, X_phase_batch, generator_model,
                                                     batch_size, image_data_format, "training")
-                    X_full_batch, X_sketch_batch = next(data_utils.gen_batch(X_full_val, X_sketch_val, batch_size))
+                    X_full_batch, X_sketch_batch = next(data_utils.gen_batch(X_full_val, X_sketch_val, X_phase_val, batch_size))
                     data_utils.plot_generated_batch(X_full_batch, X_sketch_batch, generator_model,
                                                     batch_size, image_data_format, "validation")
 

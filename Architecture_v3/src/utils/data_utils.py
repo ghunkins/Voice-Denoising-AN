@@ -4,7 +4,9 @@ import numpy as np
 import h5py
 import os
 import re
+import librosa
 from time import gmtime, strftime
+from scipy.io.wavfile import read, write
 
 import matplotlib
 # Force matplotlib to not use any Xwindows backend.
@@ -13,7 +15,12 @@ matplotlib.use('Agg')
 import matplotlib.pylab as plt
 from matplotlib.colors import LogNorm, Normalize
 
-norm = Normalize(vmin=0.0,vmax=0.1, clip=True)
+norm = Normalize(vmin=0.0,vmax=7.7, clip=True)
+# constants
+WINDOW_LENGTH = 0.032
+HOP_SIZE = 0.016
+nperseg = int(WINDOW_LENGTH / (1. / 16000.))
+noverlap = int(HOP_SIZE / (1. / 16000.))
 
 
 def normalization(X):
@@ -31,7 +38,7 @@ def normalization_audio(X):
 
 def inverse_normalization_audio(X):
     
-    return ((X + 1.) * 0.1)
+    return ((X + 1.) * 7.7)
 
 
 def get_nb_patch(img_dim, patch_size, image_data_format):
@@ -109,6 +116,8 @@ def load_data_audio(dset, image_data_format):
         X_noisy_train = hf["mag_train"][:].astype(np.float16)
         X_noisy_train = normalization_audio(X_noisy_train)
 
+        X_phase_train = hf["phase_train"][:].astype(np.float16)
+
         if image_data_format == "channels_last":
             X_clean_train = X_clean_train.transpose(0, 2, 3, 1)
             X_noisy_train = X_noisy_train.transpose(0, 2, 3, 1)
@@ -119,11 +128,13 @@ def load_data_audio(dset, image_data_format):
         X_noisy_val = hf["mag_val"][:].astype(np.float16)
         X_noisy_val = normalization_audio(X_noisy_val)
 
+        X_phase_val= hf["phase_val"][:].astype(np.float16)
+
         if image_data_format == "channels_last":
             X_clean_val = X_clean_val.transpose(0, 2, 3, 1)
             X_noisy_val = X_noisy_val.transpose(0, 2, 3, 1)
 
-        return X_clean_train, X_noisy_train, X_clean_val, X_noisy_val
+        return X_clean_train, X_noisy_train, X_phase_train, X_clean_val, X_noisy_val, X_phase_val
 
 
 def load_test_audio(size=10000, train_pct=0.8):
@@ -149,11 +160,11 @@ def load_test_audio(size=10000, train_pct=0.8):
     #X_full_train = np.array
 
 
-def gen_batch(X1, X2, batch_size):
+def gen_batch(X1, X2, X3, batch_size):
 
     while True:
         idx = np.random.choice(X1.shape[0], batch_size, replace=False)
-        yield X1[idx], X2[idx]
+        yield X1[idx], X2[idx], X3[idx]
 
 
 def get_disc_batch(X_full_batch, X_sketch_batch, generator_model, batch_counter, patch_size,
@@ -190,7 +201,7 @@ def get_disc_batch(X_full_batch, X_sketch_batch, generator_model, batch_counter,
     return X_disc, y_disc
 
 
-def plot_generated_batch(X_full, X_sketch, generator_model, batch_size, image_data_format, suffix):
+def plot_generated_batch(X_full, X_sketch, X_phase, generator_model, batch_size, image_data_format, suffix):
 
     # Generate images
     X_gen = generator_model.predict(X_sketch)
@@ -206,15 +217,37 @@ def plot_generated_batch(X_full, X_sketch, generator_model, batch_size, image_da
     #np.save(dir_to_save + "/{}_clean.npy".format(suffix), X_full)
 
     for i in range(X_gen.shape[0]):
-        plt.pcolormesh(X_gen[i, :, :, 0], cmap="gnuplot2")
+        # seperate relevant parts
+        gen = X_gen[i, :, :, 0]
+        noisy = X_sketch[i, :, :, 0]
+        clean = X_full[i, :, :, 0]
+        phase = X_phase[i, :, :, 0]
+        # save wav
+        c_gen = gen * np.exp(phase * 1j)
+        c_noisy = noisy * np.exp(phase * 1j)
+        c_clean = clean * np.exp(phase * 1j)
+        c_gen = np.append(np.zeros((1, 256)), c_gen, axis=0)
+        c_noisy = np.append(np.zeros((1, 256)), c_noisy, axis=0)
+        c_clean = np.append(np.zeros((1, 256)), c_clean, axis=0)
+        f_gen = open(dir_to_save + '/{}_gen{}.wav'.format(suffix, str(i)), 'w')
+        f_noisy = open(dir_to_save + '/{}_noisy{}.wav'.format(suffix, str(i)), 'w')
+        f_clean = open(dir_to_save + '/{}_clean{}.wav'.format(suffix, str(i)), 'w')
+        y_gen = librosa.istft(c_gen, hop_length=noverlap, win_length=nperseg, window="hamming")
+        y_noisy = librosa.istft(c_noisy, hop_length=noverlap, win_length=nperseg, window="hamming")
+        y_clean = librosa.istft(c_clean, hop_length=noverlap, win_length=nperseg, window="hamming")
+        write(f_gen, 16000, y_gen)
+        write(f_noisy, 16000, y_noisy)
+        write(f_clean, 16000, y_clean)
+        # save figures
+        plt.pcolormesh(gen, cmap="gnuplot2")
         plt.colorbar()
         plt.savefig(dir_to_save + '/{}_gen{}.png'.format(suffix, str(i)))
         plt.clf()
-        plt.pcolormesh(X_sketch[i, :, :, 0], cmap="gnuplot2")
+        plt.pcolormesh(noisy, cmap="gnuplot2")
         plt.colorbar()
         plt.savefig(dir_to_save + '/{}_noisy{}.png'.format(suffix, str(i)))
         plt.clf()
-        plt.pcolormesh(X_full[i, :, :, 0], cmap="gnuplot2")
+        plt.pcolormesh(clean, cmap="gnuplot2")
         plt.colorbar()
         plt.savefig(dir_to_save + '/{}_clean{}.png'.format(suffix, str(i)))
         plt.clf()
