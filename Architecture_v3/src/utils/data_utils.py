@@ -122,7 +122,6 @@ def load_data_audio(dset, image_data_format):
 
         X_clean_train = hf["clean_train"][:].astype(np.float16)
         X_clean_train = normalization_audio2(X_clean_train)
-        X_clean_train = norm
 
         X_noisy_train = hf["mag_train"][:].astype(np.float16)
         X_noisy_train = normalization_audio2(X_noisy_train)
