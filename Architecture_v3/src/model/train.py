@@ -117,7 +117,7 @@ def train(**kwargs):
                 disc_loss = discriminator_model.train_on_batch(X_disc, y_disc)
 
                 # Create a batch to feed the generator model
-                X_gen_target, X_gen = next(data_utils.gen_batch(X_full_train, X_sketch_train, batch_size))
+                X_gen_target, X_gen, X_phase = next(data_utils.gen_batch(X_full_train, X_sketch_train, X_phase_train, batch_size))
                 y_gen = np.zeros((X_gen.shape[0], 2), dtype=np.uint8)
                 y_gen[:, 1] = 1
 
@@ -138,8 +138,8 @@ def train(**kwargs):
                     # Get new images from validation
                     data_utils.plot_generated_batch(X_full_batch, X_sketch_batch, X_phase_batch, generator_model,
                                                     batch_size, image_data_format, "training")
-                    X_full_batch, X_sketch_batch = next(data_utils.gen_batch(X_full_val, X_sketch_val, X_phase_val, batch_size))
-                    data_utils.plot_generated_batch(X_full_batch, X_sketch_batch, generator_model,
+                    X_full_batch, X_sketch_batch, X_phase_batch = next(data_utils.gen_batch(X_full_val, X_sketch_val, X_phase_val, batch_size))
+                    data_utils.plot_generated_batch(X_full_batch, X_sketch_batch, X_phase_batch, generator_model,
                                                     batch_size, image_data_format, "validation")
 
                 if batch_counter >= n_batch_per_epoch:
