@@ -42,6 +42,7 @@ def inverse_normalization_audio(X):
     return ((X + 1.) * 7.7)
 
 def normalization_audio2(X):
+    X[X == 0] = np.finfo(dtype='float32').tiny
     X = np.log10(X)
     return (norm2(X) * 2.) - 1. 
 
