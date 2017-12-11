@@ -16,6 +16,7 @@ import matplotlib.pylab as plt
 from matplotlib.colors import LogNorm, Normalize
 
 norm = Normalize(vmin=0.0,vmax=7.7, clip=True)
+norm2 = Normalize(vmin=-6.0, vmax=1.0, clip=True)
 # constants
 WINDOW_LENGTH = 0.032
 HOP_SIZE = 0.016
@@ -39,6 +40,14 @@ def normalization_audio(X):
 def inverse_normalization_audio(X):
     
     return ((X + 1.) * 7.7)
+
+def normalization_audio2(X):
+    X = np.log10(X)
+    return (norm2(X) * 2.) - 1. 
+
+def inverse_normalization_audio2(X):
+    X = ((X * 3.5) - 2.5)
+    return np.power(10.0, X)
 
 
 def get_nb_patch(img_dim, patch_size, image_data_format):
@@ -111,10 +120,11 @@ def load_data_audio(dset, image_data_format):
     with h5py.File("../../../../%s_data.h5" % dset, "r") as hf:
 
         X_clean_train = hf["clean_train"][:].astype(np.float16)
-        X_clean_train = normalization_audio(X_clean_train)
+        X_clean_train = normalization_audio2(X_clean_train)
+        X_clean_train = norm
 
         X_noisy_train = hf["mag_train"][:].astype(np.float16)
-        X_noisy_train = normalization_audio(X_noisy_train)
+        X_noisy_train = normalization_audio2(X_noisy_train)
 
         X_phase_train = hf["phase_train"][:].astype(np.float16)
 
@@ -125,10 +135,10 @@ def load_data_audio(dset, image_data_format):
             X_phase_train = X_phase_train.transpose(0, 2, 3, 1)
 
         X_clean_val = hf["clean_val"][:].astype(np.float16)
-        X_clean_val = normalization_audio(X_clean_val)
+        X_clean_val = normalization_audio2(X_clean_val)
 
         X_noisy_val = hf["mag_val"][:].astype(np.float16)
-        X_noisy_val = normalization_audio(X_noisy_val)
+        X_noisy_val = normalization_audio2(X_noisy_val)
 
         X_phase_val= hf["phase_val"][:].astype(np.float16)
 
@@ -209,9 +219,9 @@ def plot_generated_batch(X_full, X_sketch, X_phase, generator_model, batch_size,
     # Generate images
     X_gen = generator_model.predict(X_sketch)
 
-    X_sketch = inverse_normalization_audio(X_sketch)
-    X_full = inverse_normalization_audio(X_full)
-    X_gen = inverse_normalization_audio(X_gen)
+    X_sketch = inverse_normalization_audio2(X_sketch)
+    X_full = inverse_normalization_audio2(X_full)
+    X_gen = inverse_normalization_audio2(X_gen)
 
     dir_to_save = "../../figures/" + suffix + "_" + strftime("%Y-%m-%d %H:%M:%S", gmtime())
     os.makedirs(dir_to_save)
