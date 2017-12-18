@@ -1,10 +1,6 @@
 import os
 import argparse
 from time import gmtime, strftime
-# Utils
-sys.path.append("../utils")
-import general_utils
-import data_utils
 
 
 def launch_training(**kwargs):
