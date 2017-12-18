@@ -214,7 +214,7 @@ def get_disc_batch(X_full_batch, X_sketch_batch, generator_model, batch_counter,
     return X_disc, y_disc
 
 
-def plot_generated_batch(X_full, X_sketch, X_phase, generator_model, batch_size, image_data_format, suffix):
+def plot_generated_batch(X_full, X_sketch, X_phase, generator_model, batch_size, image_data_format, suffix, dirs):
 
     # Generate images
     X_gen = generator_model.predict(X_sketch)
@@ -222,8 +222,7 @@ def plot_generated_batch(X_full, X_sketch, X_phase, generator_model, batch_size,
     X_sketch = inverse_normalization_audio2(X_sketch)
     X_full = inverse_normalization_audio2(X_full)
     X_gen = inverse_normalization_audio2(X_gen)
-
-    dir_to_save = "../../figures/" + suffix + "_" + strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    dir_to_save = dirs + suffix
     os.makedirs(dir_to_save)
     #np.save(dir_to_save + "/{}_noisy.npy".format(suffix), X_sketch)
     #np.save(dir_to_save + "/{}_gen.npy".format(suffix), X_gen)

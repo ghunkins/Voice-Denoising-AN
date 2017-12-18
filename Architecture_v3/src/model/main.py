@@ -1,5 +1,10 @@
 import os
 import argparse
+from time import gmtime, strftime
+# Utils
+sys.path.append("../utils")
+import general_utils
+import data_utils
 
 
 def launch_training(**kwargs):
@@ -13,6 +18,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train model')
     parser.add_argument('patch_size', type=int, nargs=2, action="store", help="Patch size for D")
     parser.add_argument('--backend', type=str, default="theano", help="theano or tensorflow")
+    parser.add_argument('--save_dir', type=str, default="/scratch/ghunkins/DCGAN_RESULTS/", help="Where to save results")
     parser.add_argument('--generator', type=str, default="upsampling", help="upsampling or deconv")
     parser.add_argument('--dset', type=str, default="facades", help="facades")
     parser.add_argument('--batch_size', default=4, type=int, help='Batch size')
@@ -48,6 +54,9 @@ if __name__ == "__main__":
 
     import train
 
+    save_dir = args.save_dir + 'DCGAN_RUN_' + strftime("%Y-%m-%d_%H:%M:%S", gmtime()) + '/'
+    os.makedirs(save_dir)
+
     # Set default params
     d_params = {"dset": args.dset,
                 "generator": args.generator,
@@ -64,8 +73,10 @@ if __name__ == "__main__":
                 "use_label_smoothing": args.use_label_smoothing,
                 "label_flipping": args.label_flipping,
                 "patch_size": args.patch_size,
-                "use_mbd": args.use_mbd
+                "use_mbd": args.use_mbd, 
+                "save_dir": save_dir
                 }
 
     # Launch training
     launch_training(**d_params)
+
