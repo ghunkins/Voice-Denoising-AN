@@ -219,11 +219,15 @@ def plot_generated_batch(X_full, X_sketch, X_phase, generator_model, batch_size,
     # Generate images
     X_gen = generator_model.predict(X_sketch)
 
+    # Inverse Normalization
     X_sketch = inverse_normalization_audio2(X_sketch)
     X_full = inverse_normalization_audio2(X_full)
     X_gen = inverse_normalization_audio2(X_gen)
+
+    # Directory to save
     dir_to_save = dirs + suffix
-    os.makedirs(dir_to_save)
+    if not os.path.isdir(dir_to_save):
+        os.makedirs(dir_to_save)
     #np.save(dir_to_save + "/{}_noisy.npy".format(suffix), X_sketch)
     #np.save(dir_to_save + "/{}_gen.npy".format(suffix), X_gen)
     #np.save(dir_to_save + "/{}_clean.npy".format(suffix), X_full)

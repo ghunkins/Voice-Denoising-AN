@@ -171,7 +171,7 @@ def train(**kwargs):
 
     # run final model on full validation set
     data_utils.plot_generated_batch(X_full_val, X_sketch_val, X_phase_val, generator_model,
-                                                    batch_size, image_data_format, "Full Validation", save_dir)
+                                    batch_size, image_data_format, "Full Validation", save_dir)
 
 
     
