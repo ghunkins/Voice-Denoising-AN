@@ -233,6 +233,10 @@ def plot_generated_batch(X_full, X_sketch, X_phase, generator_model, batch_size,
     #np.save(dir_to_save + "/{}_clean.npy".format(suffix), X_full)
 
     for i in range(X_gen.shape[0]):
+        # example folder
+        dir_i = dir_to_save + '/' + str(i+1)
+        if not os.path.isdir(dir_i):
+            os.makedirs(dir_i)
         # seperate relevant parts
         gen = X_gen[i, :, :, 0]
         noisy = X_sketch[i, :, :, 0]
@@ -245,11 +249,10 @@ def plot_generated_batch(X_full, X_sketch, X_phase, generator_model, batch_size,
         c_gen = np.append(np.zeros((1, 256)), c_gen, axis=0)
         c_noisy = np.append(np.zeros((1, 256)), c_noisy, axis=0)
         c_clean = np.append(np.zeros((1, 256)), c_clean, axis=0)
-        print c_gen.shape, c_noisy.shape, c_clean.shape
 
-        f_gen = open(dir_to_save + '/{}_gen{}.wav'.format(suffix, str(i)), 'w')
-        f_noisy = open(dir_to_save + '/{}_noisy{}.wav'.format(suffix, str(i)), 'w')
-        f_clean = open(dir_to_save + '/{}_clean{}.wav'.format(suffix, str(i)), 'w')
+        f_gen = open(dir_i + '/{}_gen{}.wav'.format(suffix, str(i)), 'w')
+        f_noisy = open(dir_i + '/{}_noisy{}.wav'.format(suffix, str(i)), 'w')
+        f_clean = open(dir_i + '/{}_clean{}.wav'.format(suffix, str(i)), 'w')
         y_gen = librosa.istft(c_gen, hop_length=noverlap, win_length=nperseg, window="hamming")
         y_noisy = librosa.istft(c_noisy, hop_length=noverlap, win_length=nperseg, window="hamming")
         y_clean = librosa.istft(c_clean, hop_length=noverlap, win_length=nperseg, window="hamming")
@@ -259,15 +262,15 @@ def plot_generated_batch(X_full, X_sketch, X_phase, generator_model, batch_size,
         # save figures
         plt.pcolormesh(np.log10(gen), cmap="gnuplot2")
         plt.colorbar()
-        plt.savefig(dir_to_save + '/{}_gen{}.png'.format(suffix, str(i)))
+        plt.savefig(dir_i + '/{}_gen{}.png'.format(suffix, str(i)))
         plt.clf()
         plt.pcolormesh(np.log10(noisy), cmap="gnuplot2")
         plt.colorbar()
-        plt.savefig(dir_to_save + '/{}_noisy{}.png'.format(suffix, str(i)))
+        plt.savefig(dir_i + '/{}_noisy{}.png'.format(suffix, str(i)))
         plt.clf()
         plt.pcolormesh(np.log10(clean), cmap="gnuplot2")
         plt.colorbar()
-        plt.savefig(dir_to_save + '/{}_clean{}.png'.format(suffix, str(i)))
+        plt.savefig(dir_i + '/{}_clean{}.png'.format(suffix, str(i)))
         plt.clf()
 
     return
