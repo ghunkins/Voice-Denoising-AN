@@ -1,0 +1,48 @@
+Using TensorFlow backend.
+2017-12-09 11:56:03.022791: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+2017-12-09 11:56:03.022859: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+2017-12-09 11:56:03.023906: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+2017-12-09 11:56:03.023920: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
+2017-12-09 11:56:03.023929: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use FMA instructions, but these are available on your machine and could speed up CPU computations.
+2017-12-09 11:56:08.954251: I tensorflow/core/common_runtime/gpu/gpu_device.cc:955] Found device 0 with properties: 
+name: Tesla K80
+major: 3 minor: 7 memoryClockRate (GHz) 0.8235
+pciBusID 0000:88:00.0
+Total memory: 11.17GiB
+Free memory: 11.10GiB
+2017-12-09 11:56:09.263527: W tensorflow/stream_executor/cuda/cuda_driver.cc:523] A non-primary context 0x108cd4b0 exists before initializing the StreamExecutor. We haven't verified StreamExecutor works with that.
+2017-12-09 11:56:09.264548: I tensorflow/core/common_runtime/gpu/gpu_device.cc:955] Found device 1 with properties: 
+name: Tesla K80
+major: 3 minor: 7 memoryClockRate (GHz) 0.8235
+pciBusID 0000:89:00.0
+Total memory: 11.17GiB
+Free memory: 11.10GiB
+2017-12-09 11:56:09.264892: I tensorflow/core/common_runtime/gpu/gpu_device.cc:976] DMA: 0 1 
+2017-12-09 11:56:09.264926: I tensorflow/core/common_runtime/gpu/gpu_device.cc:986] 0:   Y Y 
+2017-12-09 11:56:09.264937: I tensorflow/core/common_runtime/gpu/gpu_device.cc:986] 1:   Y Y 
+2017-12-09 11:56:09.264950: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1045] Creating TensorFlow device (/gpu:0) -> (device: 0, name: Tesla K80, pci bus id: 0000:88:00.0)
+2017-12-09 11:56:09.264960: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1045] Creating TensorFlow device (/gpu:1) -> (device: 1, name: Tesla K80, pci bus id: 0000:89:00.0)
+Traceback (most recent call last):
+  File "main.py", line 71, in <module>
+    launch_training(**d_params)
+  File "main.py", line 8, in launch_training
+    train.train(**kwargs)
+  File "/gpfs/fs1/home/ghunkins/Voice-Denoising-AN/Architecture_v2/src/model/train.py", line 140, in train
+    batch_size, image_data_format, "training")
+  File "../utils/data_utils.py", line 162, in plot_generated_batch
+    plt.imshow(Xr)
+  File "/scratch/ghunkins/anaconda2/envs/new_pix/lib/python2.7/site-packages/matplotlib/pyplot.py", line 3141, in imshow
+    ax = gca()
+  File "/scratch/ghunkins/anaconda2/envs/new_pix/lib/python2.7/site-packages/matplotlib/pyplot.py", line 950, in gca
+    return gcf().gca(**kwargs)
+  File "/scratch/ghunkins/anaconda2/envs/new_pix/lib/python2.7/site-packages/matplotlib/pyplot.py", line 586, in gcf
+    return figure()
+  File "/scratch/ghunkins/anaconda2/envs/new_pix/lib/python2.7/site-packages/matplotlib/pyplot.py", line 535, in figure
+    **kwargs)
+  File "/scratch/ghunkins/anaconda2/envs/new_pix/lib/python2.7/site-packages/matplotlib/backends/backend_tkagg.py", line 81, in new_figure_manager
+    return new_figure_manager_given_figure(num, figure)
+  File "/scratch/ghunkins/anaconda2/envs/new_pix/lib/python2.7/site-packages/matplotlib/backends/backend_tkagg.py", line 89, in new_figure_manager_given_figure
+    window = Tk.Tk()
+  File "/scratch/ghunkins/anaconda2/envs/new_pix/lib/python2.7/lib-tk/Tkinter.py", line 1820, in __init__
+    self.tk = _tkinter.create(screenName, baseName, className, interactive, wantobjects, useTk, sync, use)
+_tkinter.TclError: no display name and no $DISPLAY environment variable
