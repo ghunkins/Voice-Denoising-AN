@@ -117,6 +117,8 @@ def load_data_audio(dset, image_data_format):
 
         X_phase_train = hf["phase_train"][:].astype(np.float16)
 
+        X_str_train = hf["train_str"][:]
+
         if image_data_format == "channels_last":
             X_clean_train = X_clean_train.transpose(0, 2, 3, 1)
             X_noisy_train = X_noisy_train.transpose(0, 2, 3, 1)
@@ -130,19 +132,22 @@ def load_data_audio(dset, image_data_format):
 
         X_phase_val= hf["phase_val"][:].astype(np.float16)
 
+        X_str_val = hf["val_str"][:]
+
         if image_data_format == "channels_last":
             X_clean_val = X_clean_val.transpose(0, 2, 3, 1)
             X_noisy_val = X_noisy_val.transpose(0, 2, 3, 1)
             X_phase_val = X_phase_val.transpose(0, 2, 3, 1)
 
-        return X_clean_train, X_noisy_train, X_phase_train, X_clean_val, X_noisy_val, X_phase_val
+        return X_clean_train, X_noisy_train, X_phase_train, X_str_train, \
+               X_clean_val, X_noisy_val, X_phase_val, X_str_val
 
 
-def gen_batch(X1, X2, X3, batch_size):
+def gen_batch(X1, X2, X3, X4, batch_size):
 
     while True:
         idx = np.random.choice(X1.shape[0], batch_size, replace=False)
-        yield X1[idx], X2[idx], X3[idx]
+        yield X1[idx], X2[idx], X3[idx], X4[idx]
 
 
 def get_disc_batch(X_full_batch, X_sketch_batch, generator_model, batch_counter, patch_size,
@@ -179,7 +184,7 @@ def get_disc_batch(X_full_batch, X_sketch_batch, generator_model, batch_counter,
     return X_disc, y_disc
 
 
-def plot_generated_batch(X_full, X_sketch, X_phase, generator_model, batch_size, image_data_format, suffix, dirs):
+def plot_generated_batch(X_full, X_sketch, X_phase, X_str, generator_model, batch_size, image_data_format, suffix, dirs):
 
     # Generate images
     X_gen = generator_model.predict(X_sketch)
@@ -213,9 +218,9 @@ def plot_generated_batch(X_full, X_sketch, X_phase, generator_model, batch_size,
         c_noisy = np.append(np.zeros((1, 256)), c_noisy, axis=0)
         c_clean = np.append(np.zeros((1, 256)), c_clean, axis=0)
         # open files, compute ISTFT, and write WAV
-        f_gen = open(dir_i + '/{}_gen{}.wav'.format(suffix, str(i)), 'w')
-        f_noisy = open(dir_i + '/{}_noisy{}.wav'.format(suffix, str(i)), 'w')
-        f_clean = open(dir_i + '/{}_clean{}.wav'.format(suffix, str(i)), 'w')
+        f_gen = open(dir_i + '/{}_{}_gen{}.wav'.format(X_str[i], suffix, str(i)), 'w')
+        f_noisy = open(dir_i + '/{}_{}_noisy{}.wav'.format(X_str[i], suffix, str(i)), 'w')
+        f_clean = open(dir_i + '/{}_{}_clean{}.wav'.format(X_str[i], suffix, str(i)), 'w')
         y_gen = librosa.istft(c_gen, hop_length=noverlap, win_length=nperseg, window="hamming")
         y_noisy = librosa.istft(c_noisy, hop_length=noverlap, win_length=nperseg, window="hamming")
         y_clean = librosa.istft(c_clean, hop_length=noverlap, win_length=nperseg, window="hamming")

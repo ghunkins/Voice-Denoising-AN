@@ -47,7 +47,7 @@ def train(**kwargs):
     general_utils.setup_logging(model_name)
 
     # Load and rescale data
-    X_full_train, X_sketch_train, X_phase_train, X_full_val, X_sketch_val, X_phase_val = data_utils.load_data_audio(dset, image_data_format)
+    X_full_train, X_sketch_train, X_phase_train, X_str_train, X_full_val, X_sketch_val, X_phase_val, X_str_val = data_utils.load_data_audio(dset, image_data_format)
     img_dim = X_full_train.shape[-3:]
 
     # Get the number of non overlapping patch and the size of input image to the discriminator
@@ -102,7 +102,7 @@ def train(**kwargs):
             batch_counter = 1
             start = time.time()
 
-            for X_full_batch, X_sketch_batch, X_phase_batch in data_utils.gen_batch(X_full_train, X_sketch_train, X_phase_train, batch_size):
+            for X_full_batch, X_sketch_batch, X_phase_batch, X_str_batch in data_utils.gen_batch(X_full_train, X_sketch_train, X_phase_train, X_str_train, batch_size):
 
                 # Create a batch to feed the discriminator model
                 X_disc, y_disc = data_utils.get_disc_batch(X_full_batch,
@@ -118,7 +118,7 @@ def train(**kwargs):
                 disc_loss = discriminator_model.train_on_batch(X_disc, y_disc)
 
                 # Create a batch to feed the generator model
-                X_gen_target, X_gen, X_phase = next(data_utils.gen_batch(X_full_train, X_sketch_train, X_phase_train, batch_size))
+                X_gen_target, X_gen, X_phase, X_str = next(data_utils.gen_batch(X_full_train, X_sketch_train, X_phase_train, X_str_train, batch_size))
                 y_gen = np.zeros((X_gen.shape[0], 2), dtype=np.uint8)
                 y_gen[:, 1] = 1
 
@@ -137,10 +137,10 @@ def train(**kwargs):
                 # Save images for visualization
                 if batch_counter % (n_batch_per_epoch / 2) == 0:
                     # Get new images from validation
-                    data_utils.plot_generated_batch(X_full_batch, X_sketch_batch, X_phase_batch, generator_model,
+                    data_utils.plot_generated_batch(X_full_batch, X_sketch_batch, X_phase_batch, X_str_batch, generator_model,
                                                     batch_size, image_data_format, "Train Epoch " + str(e + 1), save_dir)
-                    X_full_batch, X_sketch_batch, X_phase_batch = next(data_utils.gen_batch(X_full_val, X_sketch_val, X_phase_val, batch_size))
-                    data_utils.plot_generated_batch(X_full_batch, X_sketch_batch, X_phase_batch, generator_model,
+                    X_full_batch, X_sketch_batch, X_phase_batch, X_str_batch = next(data_utils.gen_batch(X_full_val, X_sketch_val, X_phase_val, X_str_val, batch_size))
+                    data_utils.plot_generated_batch(X_full_batch, X_sketch_batch, X_phase_batch, X_str_batch, generator_model,
                                                     batch_size, image_data_format, "Validation Epoch " + str(e + 1), save_dir)
 
                 if batch_counter >= n_batch_per_epoch:
@@ -170,7 +170,7 @@ def train(**kwargs):
     discriminator_model.save(save_dir + 'DISCRIMINATOR.h5')
 
     # run final model on full validation set
-    data_utils.plot_generated_batch(X_full_val, X_sketch_val, X_phase_val, generator_model,
+    data_utils.plot_generated_batch(X_full_val, X_sketch_val, X_phase_val, X_str_val, generator_model,
                                     batch_size, image_data_format, "Full Validation", save_dir)
 
 
