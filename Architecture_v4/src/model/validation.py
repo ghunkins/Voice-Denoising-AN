@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../utils")
 import data_utils
 import os
 from keras.models import load_model
