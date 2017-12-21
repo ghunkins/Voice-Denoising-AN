@@ -230,15 +230,15 @@ def plot_generated_batch(X_full, X_sketch, X_phase, X_str, generator_model, batc
         # save figures in log format
         plt.pcolormesh(np.log10(gen), cmap="gnuplot2")
         plt.colorbar()
-        plt.savefig(dir_i + '/{}_gen{}.png'.format(suffix, str(i)))
+        plt.savefig(dir_i + '/{}_{}_gen{}.png'.format(X_str[i], suffix, str(i)))
         plt.clf()
         plt.pcolormesh(np.log10(noisy), cmap="gnuplot2")
         plt.colorbar()
-        plt.savefig(dir_i + '/{}_noisy{}.png'.format(suffix, str(i)))
+        plt.savefig(dir_i + '/{}_{}_noisy{}.png'.format(X_str[i], suffix, str(i)))
         plt.clf()
         plt.pcolormesh(np.log10(clean), cmap="gnuplot2")
         plt.colorbar()
-        plt.savefig(dir_i + '/{}_clean{}.png'.format(suffix, str(i)))
+        plt.savefig(dir_i + '/{}_{}_clean{}.png'.format(X_str[i], suffix, str(i)))
         plt.clf()
 
     return
