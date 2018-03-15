@@ -1,0 +1,26 @@
+Using TensorFlow backend.
+../utils/data_utils.py:34: RuntimeWarning: divide by zero encountered in log10
+  X = np.log10(X)
+2017-12-20 22:40:02.281283: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+2017-12-20 22:40:02.283781: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+2017-12-20 22:40:02.284020: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+2017-12-20 22:40:05.661306: I tensorflow/core/common_runtime/gpu/gpu_device.cc:955] Found device 0 with properties: 
+name: Tesla K20Xm
+major: 3 minor: 5 memoryClockRate (GHz) 0.732
+pciBusID 0000:20:00.0
+Total memory: 5.57GiB
+Free memory: 5.49GiB
+2017-12-20 22:40:05.895598: W tensorflow/stream_executor/cuda/cuda_driver.cc:523] A non-primary context 0x7f543b0 exists before initializing the StreamExecutor. We haven't verified StreamExecutor works with that.
+2017-12-20 22:40:05.896315: I tensorflow/core/common_runtime/gpu/gpu_device.cc:955] Found device 1 with properties: 
+name: Tesla K20Xm
+major: 3 minor: 5 memoryClockRate (GHz) 0.732
+pciBusID 0000:8b:00.0
+Total memory: 5.57GiB
+Free memory: 5.49GiB
+2017-12-20 22:40:05.896421: I tensorflow/core/common_runtime/gpu/gpu_device.cc:847] Peer access not supported between device ordinals 0 and 1
+2017-12-20 22:40:05.896461: I tensorflow/core/common_runtime/gpu/gpu_device.cc:847] Peer access not supported between device ordinals 1 and 0
+2017-12-20 22:40:05.896504: I tensorflow/core/common_runtime/gpu/gpu_device.cc:976] DMA: 0 1 
+2017-12-20 22:40:05.896543: I tensorflow/core/common_runtime/gpu/gpu_device.cc:986] 0:   Y N 
+2017-12-20 22:40:05.896566: I tensorflow/core/common_runtime/gpu/gpu_device.cc:986] 1:   N Y 
+2017-12-20 22:40:05.896594: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1045] Creating TensorFlow device (/gpu:0) -> (device: 0, name: Tesla K20Xm, pci bus id: 0000:20:00.0)
+2017-12-20 22:40:05.896616: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1045] Creating TensorFlow device (/gpu:1) -> (device: 1, name: Tesla K20Xm, pci bus id: 0000:8b:00.0)
