@@ -109,38 +109,43 @@ def load_data(dset, image_data_format):
 def load_data_audio(dset, image_data_format):
     with h5py.File("../../../../%s_data.h5" % dset, "r") as hf:
 
-        X_clean_train = hf["clean_train"][:].astype(np.float16)
-        X_clean_train = normalization_audio(X_clean_train)
+        X_clean_mag_train = hf["mag_train_clean"][:].astype(np.float16)
+        X_clean_mag_train = normalization_audio(X_clean_mag_train)
 
-        X_noisy_train = hf["mag_train"][:].astype(np.float16)
-        X_noisy_train = normalization_audio(X_noisy_train)
+        X_noisy_mag_train = hf["mag_train_noisy"][:].astype(np.float16)
+        X_noisy_mag_train = normalization_audio(X_noisy_mag_train)
 
-        X_phase_train = hf["phase_train"][:].astype(np.float16)
+        X_clean_phase_train = hf["phase_train_clean"][:].astype(np.float16)
+        X_noisy_phase_train = hf["phase_train_noisy"][:].astype(np.float16)
 
         X_str_train = hf["train_str"][:]
 
         if image_data_format == "channels_last":
-            X_clean_train = X_clean_train.transpose(0, 2, 3, 1)
-            X_noisy_train = X_noisy_train.transpose(0, 2, 3, 1)
-            X_phase_train = X_phase_train.transpose(0, 2, 3, 1)
+            X_clean_mag_train = X_clean_mag_train.transpose(0, 2, 3, 1)
+            X_noisy_mag_train = X_noisy_mag_train.transpose(0, 2, 3, 1)
+            X_clean_phase_train = X_clean_phase_train.transpose(0, 2, 3, 1)
+            X_noisy_phase_train = X_noisy_phase_train.transpose(0, 2, 3, 1)
 
-        X_clean_val = hf["clean_val"][:].astype(np.float16)
-        X_clean_val = normalization_audio(X_clean_val)
+        X_clean_mag_test = hf["mag_test_clean"][:].astype(np.float16)
+        X_clean_mag_test = normalization_audio(X_clean_mag_test)
 
-        X_noisy_val = hf["mag_val"][:].astype(np.float16)
-        X_noisy_val = normalization_audio(X_noisy_val)
+        X_noisy_mag_test = hf["mag_test_noisy"][:].astype(np.float16)
+        X_noisy_mag_test = normalization_audio(X_noisy_mag_test)
 
-        X_phase_val= hf["phase_val"][:].astype(np.float16)
+        X_clean_phase_test = hf["phase_test_clean"][:].astype(np.float16)
+        X_noisy_phase_test = hf["phase_test_noisy"][:].astype(np.float16)
 
-        X_str_val = hf["val_str"][:]
+        X_str_test = hf["test_str"][:]
 
         if image_data_format == "channels_last":
-            X_clean_val = X_clean_val.transpose(0, 2, 3, 1)
-            X_noisy_val = X_noisy_val.transpose(0, 2, 3, 1)
-            X_phase_val = X_phase_val.transpose(0, 2, 3, 1)
+            X_clean_mag_test = X_clean_mag_test.transpose(0, 2, 3, 1)
+            X_noisy_mag_test = X_noisy_mag_test.transpose(0, 2, 3, 1)
+            X_clean_phase_test = X_clean_phase_test.transpose(0, 2, 3, 1)
+            X_noisy_phase_test = X_noisy_phase_test.transpose(0, 2, 3, 1)
 
-        return X_clean_train, X_noisy_train, X_phase_train, X_str_train, \
-               X_clean_val, X_noisy_val, X_phase_val, X_str_val
+        return X_clean_mag_train, X_noisy_mag_train, X_clean_phase_train,\
+               X_noisy_phase_train, X_str_train, X_clean_mag_test,\
+               X_noisy_mag_test, X_clean_phase_test, X_noisy_phase_test, X_str_test
 
 
 def gen_batch(X1, X2, X3, X4, batch_size):
@@ -184,14 +189,14 @@ def get_disc_batch(X_full_batch, X_sketch_batch, generator_model, batch_counter,
     return X_disc, y_disc
 
 
-def plot_generated_batch(X_full, X_sketch, X_phase, X_str, generator_model, batch_size, image_data_format, suffix, dirs):
+def plot_generated_batch(X_clean, X_noisy, P_clean, P_noisy, X_str, generator_model, batch_size, image_data_format, suffix, dirs):
 
     # Generate images
-    X_gen = generator_model.predict(X_sketch)
+    X_gen = generator_model.predict(X_noisy)
 
     # Inverse Normalization
-    X_sketch = inverse_normalization_audio(X_sketch)
-    X_full = inverse_normalization_audio(X_full)
+    X_noisy = inverse_normalization_audio(X_noisy)
+    X_clean = inverse_normalization_audio(X_clean)
     X_gen = inverse_normalization_audio(X_gen)
 
     # Directory to save
@@ -206,13 +211,14 @@ def plot_generated_batch(X_full, X_sketch, X_phase, X_str, generator_model, batc
             os.makedirs(dir_i)
         # seperate relevant parts
         gen = X_gen[i, :, :, 0]
-        noisy = X_sketch[i, :, :, 0]
-        clean = X_full[i, :, :, 0]
-        phase = X_phase[i, :, :, 0]
+        noisy = X_noisy[i, :, :, 0]
+        clean = X_clean[i, :, :, 0]
+        c_phase = P_clean[i, :, :, 0]
+        n_phase = P_noisy[i, :, :, 0]
         # re-compute the complex
-        c_gen = gen * np.exp(phase * 1j)
-        c_noisy = noisy * np.exp(phase * 1j)
-        c_clean = clean * np.exp(phase * 1j)
+        c_gen = gen * np.exp(n_phase * 1j)
+        c_noisy = noisy * np.exp(n_phase * 1j)
+        c_clean = clean * np.exp(c_phase * 1j)
         # transform from (256, 256) --> (257, 256)
         c_gen = np.append(np.zeros((1, 256)), c_gen, axis=0)
         c_noisy = np.append(np.zeros((1, 256)), c_noisy, axis=0)
